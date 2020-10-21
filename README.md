@@ -5,7 +5,7 @@ Convert multi-page PDF animations to H.264 video
 pdf2video is a light-weight command-line utility that uses [PDFium](https://pdfium.googlesource.com/pdfium/) and [FFmpeg](https://ffmpeg.org/) under the hood to render (almost) lossless H.264 videos from a multi-page PDF document.
 
 ## Installation
-Download the latest release (pending), extract it somewhere in your user-folder and run pdf2video.exe from the command-line.
+Download the [latest release](https://github.com/maschere/pdf2video/releases/latest), extract it somewhere in your user-folder and run pdf2video.exe from the command-line.
 
 ## Usage
 Command-line parameters are
