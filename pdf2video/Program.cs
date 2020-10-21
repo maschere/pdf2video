@@ -19,7 +19,7 @@ namespace pdf2video
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             var parsed = Parser.Default.ParseArguments<Options>(args);
 
-            parsed.WithParsed<Options>(async o =>
+            parsed.WithParsed<Options>(o =>
             {
                 Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
                 PdfDocument pdf = new PdfDocument(o.PdfInputFile);
@@ -73,9 +73,15 @@ namespace pdf2video
 
                 Console.WriteLine($"generating {1 / frameRate * frameCount} seconds of video at {o.VideoOutputFile}");
 
-                await ffmpeg.ExecuteAsync($"-f image2 -r {frameRate} -i imgs/%08d.png -vcodec libx264 -profile:v high444 -refs 16 -crf 0 -preset slow {o.VideoOutputFile}");
+                var t = ffmpeg.ExecuteAsync($"-f image2 -r {frameRate} -i imgs/%08d.png -vcodec libx264 -profile:v high444 -refs 16 -crf 0 -preset slow {o.VideoOutputFile}");
 
 
+                //poor mans await
+                while (t.IsCompleted == false)
+                {
+                    Console.Write(".");
+                    Thread.Sleep(50);
+                }
                 //Clear temp path
                 DirectoryInfo di = new DirectoryInfo("imgs");
 
@@ -84,12 +90,12 @@ namespace pdf2video
                     file.Delete();
                 }
 
-                
             });
             //open pdf
             //select page range
             //render as png sequence
             //export to mov
+
 
             Console.WriteLine("all done");
         }
