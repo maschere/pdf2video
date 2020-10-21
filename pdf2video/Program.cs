@@ -17,10 +17,7 @@ namespace pdf2video
         static void Main(string[] args)
         {
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            bool busy = true;
             var parsed = Parser.Default.ParseArguments<Options>(args);
-
-            parsed.WithNotParsed(e => busy = false);
 
             parsed.WithParsed<Options>(async o =>
             {
@@ -51,7 +48,7 @@ namespace pdf2video
 
                 }
 
-                var ffmpeg = new Engine();
+                var ffmpeg = new Engine(o.FFmpegPath);
                 Console.WriteLine("encoding video");
 
                 //calc framerate
@@ -87,16 +84,14 @@ namespace pdf2video
                     file.Delete();
                 }
 
-                Console.WriteLine("all done");
-                busy = false;
+                
             });
             //open pdf
             //select page range
             //render as png sequence
             //export to mov
-            while (busy)
-                Thread.Sleep(50);
-            
+
+            Console.WriteLine("all done");
         }
     }
 
@@ -108,6 +103,9 @@ namespace pdf2video
         [Option('o',"output", Required = true, HelpText = "video output file")]
         public string VideoOutputFile { get; set; }
 
+
+        [Option("ffmpeg", Required = false, HelpText = "directory of ffmpeg executable")]
+        public string FFmpegPath { get; set; }
 
 
         [Option("from", Required = false, HelpText = "start conversion from this page (0 based index)")]
